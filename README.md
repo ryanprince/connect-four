@@ -8,7 +8,7 @@ programatic use is flexible.
 ## Getting Started
 
 ```
-node app.js // starts a game that pits two minimax AIs against one another
+node app.js // starts a game that pits the user against a minimax AI player
 ```
 
 If using human players, the column letter is used as input.
