@@ -61,4 +61,4 @@ Human Player, what is you move?
 
 ## Authors
 
-* **Ryan Prince** - *Initial work* - [PurpleBooth](https://github.com/rnprince)
+* **Ryan Prince** - *Initial work* - [rnprince](https://github.com/rnprince)
