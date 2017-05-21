@@ -22,8 +22,8 @@ const COLS = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 // 0|                     |
 //  | A  B  C  D  E  F  G |
 
-const getRow = spaceIndex => Math.floor(spaceIndex / ROW_COUNT);
-const getColIndex = spaceIndex => spaceIndex % ROW_COUNT;
+const getRow = spaceIndex => spaceIndex % ROW_COUNT;
+const getColIndex = spaceIndex => Math.floor(spaceIndex / ROW_COUNT);
 const getSpaceIndexAt = (row, colIndex) =>  ROW_COUNT * colIndex + parseInt(row);
 
 // direction = 1 is up, = -1 is down.
