@@ -7,7 +7,6 @@ const PIECE = {
 };
 
 const PIECEToChar = {};
-// PIECEToChar[PIECE.BLANK] = '-';
 PIECEToChar[PIECE.BLANK] = ' ';
 PIECEToChar[PIECE.X] = 'X';
 PIECEToChar[PIECE.O] = 'O';
