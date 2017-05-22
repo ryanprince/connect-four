@@ -34,9 +34,8 @@ function C4Board() {
   this.add = (piece, col) => {
     let colArr = spaces[COLS.indexOf(col)];
     let blankSpaceIndex = colArr.indexOf(PIECE.BLANK);
-    if (blankSpaceIndex < 0) {
+    if (blankSpaceIndex < 0)
       return false;
-    }
     colArr[blankSpaceIndex] = piece;
     return true;
   };
@@ -59,7 +58,7 @@ function C4Board() {
 
   this.isFull = () => spaces.every(col => col.every(piece => piece !== PIECE.BLANK));
 
-  this.availableCols = () => COLS.filter(col => spaces[COLS.indexOf(col)].some(piece => piece === PIECE.BLANK));
+  this.availableCols = () => COLS.filter((col, i) => spaces[i].some(piece => piece === PIECE.BLANK));
 
   this.winningPiece = () => {
     for (let col = 0; col < COLS.length; ++col) {
