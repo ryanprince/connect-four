@@ -1,7 +1,7 @@
 {
   "name": "connect-four",
   "version": "1.0.0",
-  "description": "",
+  "description": "A console connect four game written with Node.js. Human and AI players are implemented so that you can play against the computer, watch the computer play against itself, or play against your friend while sharing a computer. (Network games aren't supported yet.) The Game class is designed so that programatic use is flexible.",
   "main": "aiPlayer.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,5 +10,14 @@
   "license": "ISC",
   "dependencies": {
     "prompt-sync": "^4.1.5"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rnprince/connect-four.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rnprince/connect-four/issues"
+  },
+  "homepage": "https://github.com/rnprince/connect-four#readme"
 }

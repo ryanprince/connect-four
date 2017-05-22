@@ -5,7 +5,7 @@ const STRATEGY = {
   MINIMAX: 1
 };
 
-const MAX_DEPTH = 7;
+const MAX_DEPTH = 8;
 
 function Player(name, symbol, strategy) {
   this.name = name;

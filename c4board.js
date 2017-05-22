@@ -14,123 +14,75 @@ PIECEToChar[PIECE.O] = 'O';
 const ROW_COUNT = 6;
 const COLS = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
+//    A  B  C  D  E  F  G
 // 5|                     |
 // 4|                     |
 // 3|                     |
 // 2|                     |
 // 1|                     |
 // 0|                     |
-//  | A  B  C  D  E  F  G |
-
-const getRow = spaceIndex => spaceIndex % ROW_COUNT;
-const getColIndex = spaceIndex => Math.floor(spaceIndex / ROW_COUNT);
-const getSpaceIndexAt = (row, colIndex) =>  ROW_COUNT * colIndex + parseInt(row);
-
-// direction = 1 is up, = -1 is down.
-const diagnalsFrom = (spaceIndex, direction) => {
-  let row = getRow(spaceIndex);
-  let col = getColIndex(spaceIndex);
-  let result = [];
-  for (; row < ROW_COUNT && col < COLS.length && row >= 0 && col >= 0;) {
-    result.push(getSpaceIndexAt(row, col));
-    if (direction === 1) {
-      row++;
-    } else {
-      row--;
-    }
-    col++;
-  }
-  return result;
-};
-
-// Defines the runs of indicies in which connections of four may occur
-const makeRunsIndex = (spaceIndices) => {
-  const RUNS = {};
-  for (let colIndex in COLS) {
-    RUNS[COLS[colIndex]] = spaceIndices.slice(colIndex*ROW_COUNT, colIndex*ROW_COUNT + ROW_COUNT);
-  }
-  for (let rowIndex = 0; rowIndex < ROW_COUNT; ++rowIndex) {
-    RUNS[rowIndex] = [];
-    for (let colIndex in COLS)
-      RUNS[rowIndex].push(colIndex*ROW_COUNT + parseInt(rowIndex));
-  }
-
-  // Diagonals are trickier than the columns and rows
-  let diagDownStarts = [...RUNS[COLS[0]], ...RUNS[ROW_COUNT-1]];
-  let diagUpStarts = [...RUNS[COLS[0]], ...RUNS[0]];
-  for (let startIndex of diagDownStarts) {
-    RUNS[COLS[getColIndex(startIndex)] + '_' + getRow(startIndex) + '_down'] = diagnalsFrom(startIndex, -1);
-  }
-  for (let startIndex of diagUpStarts) {
-    RUNS[COLS[getColIndex(startIndex)] + '_' + getRow(startIndex) + '_up'] = diagnalsFrom(startIndex, 1);
-  }
-
-  return RUNS;
-};
 
 function C4Board() {
-  // spaces = [A0, A1, ..., A5, B0, B1, ..., G5]
   const spaces = [];
-  for (let space = 0; space < COLS.length * ROW_COUNT; ++space) {
-    spaces.push(PIECE.BLANK);
-  }
-  const spaceIndices = Object.keys(spaces);
-
-  let RUNS = makeRunsIndex(spaceIndices);
-
-  // Also get an array of RUNS to work with later.
-  let RUNS_ARR = [];
-  for (let key in RUNS) {
-    RUNS_ARR.push(RUNS[key]);
+  for (let col = 0; col < COLS.length; ++col) {
+    spaces.push([]);
+    for (let row = 0; row < ROW_COUNT; ++row) {
+      spaces[col].push(PIECE.BLANK);
+    }
   }
 
   this.add = (piece, col) => {
-    let colArr = RUNS[col].map(index => spaces[index]);
-    let colArrIndex = colArr.indexOf(PIECE.BLANK);
-    if (colArrIndex < 0) {
+    let colArr = spaces[COLS.indexOf(col)];
+    let blankSpaceIndex = colArr.indexOf(PIECE.BLANK);
+    if (blankSpaceIndex < 0) {
       return false;
     }
-    let spacesIndex = RUNS[col][colArrIndex];
-    spaces[spacesIndex] = piece;
+    colArr[blankSpaceIndex] = piece;
     return true;
   };
 
   this.pop = col => {
-    let colVals = RUNS[col].map(index => spaces[index]);
-    let removeAtRow = colVals.indexOf(PIECE.BLANK) - 1;
-    if (removeAtRow < 0)
-      removeAtRow = ROW_COUNT - 1;
-    spaces[RUNS[col][removeAtRow]] = PIECE.BLANK;
-  };
-
-  this.winningSymbol = () => {
-    for (let piece of [PIECE.X, PIECE.O]) {
-      if (RUNS.some(run => run.every(space => spaces[space] === piece)))
-        return piece;
-    }
-    return undefined;
+    let colArr = spaces[COLS.indexOf(col)];
+    let topPieceIndex = colArr.indexOf(PIECE.BLANK) - 1;
+    if (topPieceIndex < 0)
+      topPieceIndex = ROW_COUNT - 1;
+    colArr[topPieceIndex] = PIECE.BLANK;
   };
 
   this.print = () => {
     console.log(`  ${COLS.join('  ')}  `);
     for (let row = ROW_COUNT - 1; row >= 0; --row) {
-      console.log(`| ${RUNS[row].map(spaceIndex => PIECEToChar[spaces[spaceIndex]]).join('  ')} |`);
+      let colStr = spaces.map(col => PIECEToChar[col[row]]).join('  ');
+      console.log(`| ${colStr} |`);
     }
   };
 
-  this.isFull = () => spaces.every(piece => piece !== PIECE.BLANK);
+  this.isFull = () => spaces.every(col => col.every(piece => piece !== PIECE.BLANK));
 
-  this.availableCols = () => COLS.filter(col => RUNS[col].some(spaceIndex => spaces[spaceIndex] === PIECE.BLANK));
+  this.availableCols = () => COLS.filter(col => spaces[COLS.indexOf(col)].some(piece => piece === PIECE.BLANK));
 
   this.winningPiece = () => {
-    let runStrs = RUNS_ARR.map(run => run.map(index => spaces[index]).join(''));
-    let Xwin = [PIECE.X, PIECE.X, PIECE.X, PIECE.X].join('');
-    let Owin = [PIECE.O, PIECE.O, PIECE.O, PIECE.O].join('');
-    if (runStrs.some(str => str.indexOf(Xwin) >= 0)) {
-      return PIECE.X;
-    }
-    if (runStrs.some(str => str.indexOf(Owin) >= 0)) {
-      return PIECE.O;
+    for (let col = 0; col < COLS.length; ++col) {
+      for (let row = 0; row < ROW_COUNT; ++row) {
+        let piece = spaces[col][row];
+        if (piece === PIECE.BLANK)
+          continue;
+
+        if (col+3 < COLS.length) {
+          // four to the right
+          if (piece === spaces[col+1][row] && piece === spaces[col+2][row] && piece === spaces[col+3][row])
+            return piece;
+          // four diagonally up
+          if (row+3 < ROW_COUNT && piece === spaces[col+1][row+1] && piece === spaces[col+2][row+2] && piece === spaces[col+3][row+3])
+            return piece;
+          // four diagonally down
+          if (row-3 >= 0 && piece === spaces[col+1][row-1] && piece === spaces[col+2][row-2] && piece === spaces[col+3][row-3])
+            return piece;
+        }
+        // four up
+        if (row+3 < ROW_COUNT && piece === spaces[col][row+1] && piece === spaces[col][row+2] && piece === spaces[col][row+3])
+          return piece;
+      }
     }
     return undefined;
   };
