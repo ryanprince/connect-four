@@ -43,11 +43,10 @@ function Player(name, symbol, strategy) {
     });
     let selectionFunction = minimizingPlayer ? Math.min : Math.max;
     let bestVal = selectionFunction(...candidateVals);
-    let bestMove = moveCandidates[candidateVals.indexOf(bestVal)];
-
-    // If multiple moves are equally good, randomly select one
     let bestMoves = moveCandidates.filter((move, i) => candidateVals[i] === bestVal);
-    bestMove = bestMoves[Math.floor(Math.random() * bestMoves.length)];
+
+    // Randomly select from the best moves
+    let bestMove = bestMoves[Math.floor(Math.random() * bestMoves.length)];
 
     if (depth === 0)
       return bestMove;
